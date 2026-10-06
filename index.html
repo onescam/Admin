@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Support Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--silver:rgba(192,198,210,.24);--silver-hi:#cfd4dd;--muted:#8a93a8;--gold:linear-gradient(90deg,#f3d467,#e4ba3f 55%,#cfa02b)}
+*{box-sizing:border-box;margin:0}
+html{color-scheme:dark}
+[hidden]{display:none!important}
+body{min-height:100dvh;background:#000;color:#ece6d6;font:400 1rem/1.5 Inter,system-ui,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid #ecd48a;outline-offset:3px}
+input,textarea{width:100%;padding:14px 16px;border:1px solid var(--silver);border-radius:12px;background:transparent}
+input:focus,textarea:focus{outline:0;border-color:var(--silver-hi);box-shadow:0 0 0 1px rgba(207,212,221,.35),0 0 16px rgba(207,212,221,.16)}
+.gold{border:0;background:var(--gold);color:#1a1405;font-weight:600}
+.gold:disabled{opacity:.6;cursor:wait}
+.login{min-height:100dvh;display:grid;place-items:center;padding:20px}
+.card{width:min(380px,100%);display:flex;flex-direction:column;gap:14px;padding:32px 28px;border:1px solid var(--silver);border-radius:16px}
+.card h1{font-size:1.375rem;font-weight:600}
+.card .gold{padding:12px;border-radius:999px}
+.error{min-height:1.5em;font-size:.875rem;text-align:center;color:#e8847a}
+.app{height:100dvh;display:grid;grid-template-columns:1fr}
+.side,.conv,.chat{display:flex;flex-direction:column;min-height:0}
+.side{border-right:1px solid var(--silver)}
+.chat{flex:1}
+.app[data-pane=list] .conv,.app[data-pane=conv] .side{display:none}
+.top{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--silver)}
+.grow{flex:1;min-width:0;display:flex;flex-direction:column}
+.grow small{color:var(--muted);overflow-wrap:anywhere}
+.pill{padding:6px 14px;border:1px solid var(--silver);border-radius:999px;background:none;font-size:.875rem}
+.back{width:36px;height:36px;padding:0;background:none;border:0;font-size:1.75rem;line-height:1}
+.list{flex:1;overflow-y:auto;list-style:none;padding:0}
+.t{display:flex;flex-direction:column;gap:2px;width:100%;padding:14px 16px;border:0;border-bottom:1px solid var(--silver);background:none;text-align:left}
+.t:hover,.t.on{background:rgba(201,165,75,.1)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.id{font:.75rem/1.3 ui-monospace,Menlo,monospace;color:var(--muted);user-select:all;overflow-wrap:anywhere}
+.prev{overflow:hidden;color:var(--muted);text-overflow:ellipsis;white-space:nowrap}
+time{font-size:.75rem;color:var(--muted);white-space:nowrap}
+.badge{min-width:22px;padding:0 7px;border-radius:999px;background:var(--gold);color:#1a1405;font-size:.75rem;font-weight:600;text-align:center}
+.none{margin:auto;color:var(--muted)}
+.msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:16px}
+.msg{max-width:80%;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:18px;overflow-wrap:anywhere;white-space:pre-wrap}
+.msg img{display:block;max-width:100%;max-height:260px;border-radius:12px}
+.msg.mine{align-self:flex-end;border-bottom-right-radius:6px;background:var(--gold);color:#1a1405}
+.msg.theirs{align-self:flex-start;border:1px solid var(--silver);border-bottom-left-radius:6px}
+.time{align-self:flex-end;font-size:.75rem;opacity:.65}
+.reply{display:flex;align-items:flex-end;gap:8px;padding:12px;border-top:1px solid var(--silver)}
+.reply textarea{flex:1;max-height:140px;resize:none;border-radius:22px;line-height:1.4}
+.reply .gold{padding:11px 22px;border-radius:999px}
+.flash{position:fixed;top:16px;left:50%;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;background:#c42b30;font-size:.875rem;text-align:center}
+@media(min-width:800px){.app{grid-template-columns:340px 1fr}.app[data-pane=list] .conv,.app[data-pane=conv] .side{display:flex}.back{display:none}}
+</style>
+</head>
+<body>
+<main class="login" id="login">
+<form class="card" id="login-form" novalidate>
+<h1>Support Admin</h1>
+<input name="email" type="email" autocomplete="username" placeholder="Email Address" aria-label="Email Address">
+<input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+<button class="gold" type="submit">Sign In</button>
+<p class="error" id="error" role="alert"></p>
+</form>
+</main>
+<div class="app" id="app" data-pane="list" hidden>
+<aside class="side">
+<div class="top"><div class="grow"><strong>Conversations</strong><small id="me"></small></div><button class="pill" id="out" type="button">Sign out</button></div>
+<ul class="list" id="threads"></ul>
+</aside>
+<section class="conv">
+<p class="none" id="none">Select a conversation</p>
+<div class="chat" id="chat" hidden>
+<div class="top"><button class="back" id="back" type="button" aria-label="Back">←</button><div class="grow"><strong id="who-email"></strong><span class="id" id="who-id"></span></div></div>
+<div class="msgs" id="msgs"></div>
+<form class="reply" id="reply" novalidate>
+<textarea id="text" rows="1" maxlength="2000" placeholder="Reply" aria-label="Reply"></textarea>
+<button class="gold" type="submit">Send</button>
+</form>
+</div>
+</section>
+</div>
+<p class="flash" id="flash" role="alert" hidden></p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const db = window.supabase.createClient("https://cskguqtpvvclcphuarkr.supabase.co", "sb_publishable_I2_oFR8ZlJWvNqI17m5aEg_Mlq2gzYp", { auth: { storageKey: "sb-admin-auth" } });
+const $ = (s) => document.querySelector(s);
+const node = (tag, text = "", cls = "") => Object.assign(document.createElement(tag), { textContent: text, className: cls });
+const stamp = (t) => new Date(t).toLocaleString([], { dateStyle: "short", timeStyle: "short" });
+const seen = new Set();
+let current = null;
+let channel = null;
+let flashTimer = 0;
+const flash = (text) => {
+  const f = $("#flash");
+  f.textContent = text;
+  f.hidden = false;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => (f.hidden = true), 3000);
+};
+const signed = async (paths) => {
+  if (!paths.length) return {};
+  const { data } = await db.storage.from("support").createSignedUrls(paths, 3600);
+  return Object.fromEntries((data || []).map((x) => [x.path, x.signedUrl]));
+};
+const bubble = (m, urls) => {
+  const el = node("div", "", "msg " + (m.sender === "admin" ? "mine" : "theirs"));
+  if (urls[m.image_path]) {
+    const a = Object.assign(document.createElement("a"), { href: urls[m.image_path], target: "_blank", rel: "noopener" });
+    a.append(Object.assign(new Image(), { src: urls[m.image_path], alt: "Photo", loading: "lazy" }));
+    el.append(a);
+  }
+  if (m.body) el.append(node("span", m.body));
+  el.append(node("span", stamp(m.created_at), "time"));
+  return el;
+};
+const show = async (rows) => {
+  const fresh = rows.filter((m) => !seen.has(m.id));
+  fresh.forEach((m) => seen.add(m.id));
+  const urls = await signed(fresh.filter((m) => m.image_path).map((m) => m.image_path));
+  $("#msgs").append(...fresh.map((m) => bubble(m, urls)));
+  $("#msgs").scrollTop = $("#msgs").scrollHeight;
+};
+const loadThreads = async () => {
+  const { data } = await db.rpc("admin_threads");
+  $("#threads").replaceChildren(...(data || []).map((t) => {
+    const b = node("button", "", t.user_id === current ? "t on" : "t");
+    const top = node("span", "", "row");
+    const bottom = node("span", "", "row");
+    top.append(node("b", t.email), node("time", stamp(t.last_at)));
+    bottom.append(node("span", t.last_body || "Photo", "prev"));
+    if (Number(t.unread) > 0) bottom.append(node("span", String(t.unread), "badge"));
+    b.type = "button";
+    b.append(top, node("span", t.user_id, "id"), bottom);
+    b.addEventListener("click", () => openThread(t.user_id, t.email));
+    const li = document.createElement("li");
+    li.append(b);
+    return li;
+  }));
+};
+const openThread = async (id, email) => {
+  current = id;
+  seen.clear();
+  $("#who-email").textContent = email;
+  $("#who-id").textContent = id;
+  $("#msgs").replaceChildren();
+  $("#none").hidden = true;
+  $("#chat").hidden = false;
+  $("#app").dataset.pane = "conv";
+  const { data } = await db.from("support_messages").select("id,sender,body,image_path,created_at").eq("user_id", id).order("created_at", { ascending: true }).limit(500);
+  await show(data || []);
+  await db.rpc("admin_mark_read", { p_user: id });
+  loadThreads();
+};
+const listen = () => {
+  channel = db
+    .channel("support-admin")
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "support_messages" }, async (p) => {
+      if (p.new.user_id === current) {
+        await show([p.new]);
+        if (p.new.sender === "user") await db.rpc("admin_mark_read", { p_user: current });
+      }
+      loadThreads();
+    })
+    .subscribe();
+};
+const enter = async (session) => {
+  const { data } = await db.rpc("is_admin");
+  if (data !== true) {
+    await db.auth.signOut();
+    $("#error").textContent = "This account is not an administrator.";
+    return;
+  }
+  $("#me").textContent = session.user.email;
+  $("#login").hidden = true;
+  $("#app").hidden = false;
+  $("#app").dataset.pane = "list";
+  loadThreads();
+  listen();
+};
+const leave = () => {
+  if (channel) db.removeChannel(channel);
+  channel = null;
+  current = null;
+  seen.clear();
+  $("#threads").replaceChildren();
+  $("#msgs").replaceChildren();
+  $("#chat").hidden = true;
+  $("#none").hidden = false;
+  $("#app").hidden = true;
+  $("#login").hidden = false;
+};
+$("#login-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const email = f.email.value.trim();
+  $("#error").textContent = "";
+  if (!email || !f.password.value) return ($("#error").textContent = "Enter your email and password.");
+  f.querySelector("button").disabled = true;
+  const { data, error } = await db.auth.signInWithPassword({ email, password: f.password.value });
+  f.querySelector("button").disabled = false;
+  if (error) return ($("#error").textContent = error.message === "Invalid login credentials" ? "Incorrect email or password." : error.message);
+  f.reset();
+  enter(data.session);
+});
+$("#out").addEventListener("click", async () => {
+  await db.auth.signOut();
+  leave();
+});
+$("#back").addEventListener("click", () => ($("#app").dataset.pane = "list"));
+$("#text").addEventListener("input", (e) => {
+  e.target.style.height = "auto";
+  e.target.style.height = Math.min(e.target.scrollHeight, 140) + "px";
+});
+$("#text").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey && matchMedia("(pointer: fine)").matches) {
+    e.preventDefault();
+    $("#reply").requestSubmit();
+  }
+});
+$("#reply").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const body = $("#text").value.trim();
+  if (!body || !current) return;
+  const btn = e.target.querySelector("button");
+  btn.disabled = true;
+  const { data, error } = await db.from("support_messages").insert({ user_id: current, sender: "admin", body }).select("id,sender,body,image_path,created_at").single();
+  btn.disabled = false;
+  if (error) return flash("Could not send the reply.");
+  $("#text").value = "";
+  $("#text").style.height = "";
+  show([data]);
+  loadThreads();
+});
+db.auth.getSession().then(({ data }) => data.session && enter(data.session));
+</script>
+</body>
+</html>
