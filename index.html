@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Support Admin</title>
+<title>Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -19,21 +19,26 @@ button{cursor:pointer}
 input,textarea{width:100%;padding:14px 16px;border:1px solid var(--silver);border-radius:12px;background:transparent}
 input:focus,textarea:focus{outline:0;border-color:var(--silver-hi);box-shadow:0 0 0 1px rgba(207,212,221,.35),0 0 16px rgba(207,212,221,.16)}
 .gold{border:0;background:var(--gold);color:#1a1405;font-weight:600}
-.gold:disabled{opacity:.6;cursor:wait}
+.gold:disabled,.deny:disabled{opacity:.6;cursor:wait}
 .login{min-height:100dvh;display:grid;place-items:center;padding:20px}
 .card{width:min(380px,100%);display:flex;flex-direction:column;gap:14px;padding:32px 28px;border:1px solid var(--silver);border-radius:16px}
 .card h1{font-size:1.375rem;font-weight:600}
 .card .gold{padding:12px;border-radius:999px}
 .error{min-height:1.5em;font-size:.875rem;text-align:center;color:#e8847a}
-.app{height:100dvh;display:grid;grid-template-columns:1fr}
+.app{height:100dvh;display:flex;flex-direction:column}
+.tabs{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--silver)}
+.tab{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--silver);border-radius:999px;background:none;font-weight:500}
+.tab.on{border-color:transparent;background:var(--gold);color:#1a1405;font-weight:600}
+.me{margin-left:auto;overflow:hidden;color:var(--muted);font-size:.875rem;text-overflow:ellipsis;white-space:nowrap}
+.pill{padding:6px 14px;border:1px solid var(--silver);border-radius:999px;background:none;font-size:.875rem}
+.view{flex:1;min-height:0;display:grid;grid-template-columns:1fr}
 .side,.conv,.chat{display:flex;flex-direction:column;min-height:0}
 .side{border-right:1px solid var(--silver)}
 .chat{flex:1}
-.app[data-pane=list] .conv,.app[data-pane=conv] .side{display:none}
+.view[data-pane=list] .conv,.view[data-pane=conv] .side{display:none}
 .top{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--silver)}
 .grow{flex:1;min-width:0;display:flex;flex-direction:column}
-.grow small{color:var(--muted);overflow-wrap:anywhere}
-.pill{padding:6px 14px;border:1px solid var(--silver);border-radius:999px;background:none;font-size:.875rem}
+.grow small,.sub{color:var(--muted);font-size:.875rem;overflow-wrap:anywhere}
 .back{width:36px;height:36px;padding:0;background:none;border:0;font-size:1.75rem;line-height:1}
 .list{flex:1;overflow-y:auto;list-style:none;padding:0}
 .t{display:flex;flex-direction:column;gap:2px;width:100%;padding:14px 16px;border:0;border-bottom:1px solid var(--silver);background:none;text-align:left}
@@ -43,47 +48,108 @@ input:focus,textarea:focus{outline:0;border-color:var(--silver-hi);box-shadow:0 
 .prev{overflow:hidden;color:var(--muted);text-overflow:ellipsis;white-space:nowrap}
 time{font-size:.75rem;color:var(--muted);white-space:nowrap}
 .badge{min-width:22px;padding:0 7px;border-radius:999px;background:var(--gold);color:#1a1405;font-size:.75rem;font-weight:600;text-align:center}
+.tag{padding:1px 10px;border:1px solid currentColor;border-radius:999px;font-size:.75rem;font-weight:600;text-transform:capitalize}
+.tag.pending{color:#e4ba3f}
+.tag.approved{color:#4ade80}
+.tag.rejected{color:#f87171}
 .none{margin:auto;color:var(--muted)}
 .msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:16px}
 .msg{max-width:80%;display:flex;flex-direction:column;gap:4px;padding:10px 12px;border-radius:18px;overflow-wrap:anywhere;white-space:pre-wrap}
-.msg img{display:block;max-width:100%;max-height:260px;border-radius:12px}
 .msg.mine{align-self:flex-end;border-bottom-right-radius:6px;background:var(--gold);color:#1a1405}
 .msg.theirs{align-self:flex-start;border:1px solid var(--silver);border-bottom-left-radius:6px}
 .time{align-self:flex-end;font-size:.75rem;opacity:.65}
+.grid,.gallery{display:flex;flex-wrap:wrap;gap:8px}
+.g{display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;border:0;background:none;color:var(--muted);font-size:.75rem}
+.g img{display:block;width:110px;height:110px;border-radius:12px;object-fit:cover}
+.gallery .g img{width:150px;height:150px}
+.detail{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:18px;padding:16px}
+.facts{display:flex;flex-direction:column;border:1px solid var(--silver);border-radius:14px}
+.fact{display:flex;justify-content:space-between;gap:16px;padding:12px 16px}
+.fact + .fact{border-top:1px solid var(--silver)}
+.fact .k{color:var(--muted)}
+.fact .v{text-align:right;overflow-wrap:anywhere}
+.decide{display:flex;flex-direction:column;gap:10px}
+.decide textarea{min-height:84px;resize:vertical}
+.btns{display:flex;gap:10px}
+.btns button{flex:1;padding:12px;border-radius:999px}
+.deny{border:1px solid #f87171;background:none;color:#f87171;font-weight:600}
 .reply{display:flex;align-items:flex-end;gap:8px;padding:12px;border-top:1px solid var(--silver)}
 .reply textarea{flex:1;max-height:140px;resize:none;border-radius:22px;line-height:1.4}
 .reply .gold{padding:11px 22px;border-radius:999px}
-.flash{position:fixed;top:16px;left:50%;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;background:#c42b30;font-size:.875rem;text-align:center}
-@media(min-width:800px){.app{grid-template-columns:340px 1fr}.app[data-pane=list] .conv,.app[data-pane=conv] .side{display:flex}.back{display:none}}
+.flash{position:fixed;top:16px;left:50%;z-index:10;transform:translateX(-50%);max-width:92vw;padding:12px 18px;border-radius:12px;background:#c42b30;font-size:.875rem;text-align:center}
+.flash.ok{background:#1f7a46}
+#viewer{width:100vw;height:100dvh;max-width:none;max-height:none;padding:0;border:0;border-radius:0;background:#000;overflow:hidden}
+#viewer::backdrop{background:#000}
+.vform{position:absolute;inset:0}
+.vstage{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;touch-action:none}
+#vimg{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.vbtn{position:absolute;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:1.5rem;line-height:1}
+.vclose{top:16px;right:16px}
+.vprev{top:50%;left:12px;transform:translateY(-50%)}
+.vnext{top:50%;right:12px;transform:translateY(-50%)}
+.vcount{position:absolute;top:26px;left:50%;transform:translateX(-50%);color:#fff;font-size:.875rem}
+@media(max-width:599px){.me{display:none}.pill{margin-left:auto}}
+@media(min-width:800px){.view{grid-template-columns:340px 1fr}.view[data-pane=list] .conv,.view[data-pane=conv] .side{display:flex}.back{display:none}}
 </style>
 </head>
 <body>
 <main class="login" id="login">
 <form class="card" id="login-form" novalidate>
-<h1>Support Admin</h1>
+<h1>Admin</h1>
 <input name="email" type="email" autocomplete="username" placeholder="Email Address" aria-label="Email Address">
 <input name="password" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
 <button class="gold" type="submit">Sign In</button>
 <p class="error" id="error" role="alert"></p>
 </form>
 </main>
-<div class="app" id="app" data-pane="list" hidden>
-<aside class="side">
-<div class="top"><div class="grow"><strong>Conversations</strong><small id="me"></small></div><button class="pill" id="out" type="button">Sign out</button></div>
-<ul class="list" id="threads"></ul>
-</aside>
+<div class="app" id="app" hidden>
+<nav class="tabs">
+<button class="tab on" data-tab="kyc" type="button">Verifications<span class="badge" id="kyc-count" hidden></span></button>
+<button class="tab" data-tab="support" type="button">Support<span class="badge" id="support-count" hidden></span></button>
+<span class="me" id="me"></span>
+<button class="pill" id="out" type="button">Sign out</button>
+</nav>
+<div class="view" id="view-kyc" data-pane="list">
+<aside class="side"><ul class="list" id="kyc-list"></ul></aside>
+<section class="conv">
+<p class="none" id="kyc-none">Select a verification</p>
+<div class="chat" id="kyc-chat" hidden>
+<div class="top"><button class="back" id="kyc-back" type="button" aria-label="Back">←</button><div class="grow"><strong id="kd-name"></strong><span class="sub" id="kd-email"></span><span class="id" id="kd-id"></span></div><span class="tag" id="kd-status"></span></div>
+<div class="detail">
+<div class="facts" id="kd-facts"></div>
+<div class="gallery" id="kd-gallery"></div>
+<div class="decide" id="kd-decide" hidden>
+<textarea id="kd-reason" maxlength="500" placeholder="Reason (required when rejecting)" aria-label="Reason"></textarea>
+<div class="btns"><button class="gold" id="approve" type="button">Approve</button><button class="deny" id="reject" type="button">Reject</button></div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<div class="view" id="view-support" data-pane="list" hidden>
+<aside class="side"><ul class="list" id="threads"></ul></aside>
 <section class="conv">
 <p class="none" id="none">Select a conversation</p>
 <div class="chat" id="chat" hidden>
 <div class="top"><button class="back" id="back" type="button" aria-label="Back">←</button><div class="grow"><strong id="who-email"></strong><span class="id" id="who-id"></span></div></div>
 <div class="msgs" id="msgs"></div>
-<form class="reply" id="reply" novalidate>
+<form class="reply" id="reply">
 <textarea id="text" rows="1" maxlength="2000" placeholder="Reply" aria-label="Reply"></textarea>
 <button class="gold" type="submit">Send</button>
 </form>
 </div>
 </section>
 </div>
+</div>
+<dialog id="viewer" aria-label="Photo">
+<form class="vform">
+<div class="vstage" id="vstage"><img id="vimg" alt="Photo" draggable="false"></div>
+<button class="vbtn vclose" id="vclose" type="button" aria-label="Close">×</button>
+<button class="vbtn vprev" id="vprev" type="button" aria-label="Previous">‹</button>
+<button class="vbtn vnext" id="vnext" type="button" aria-label="Next">›</button>
+<span class="vcount" id="vcount"></span>
+</form>
+</dialog>
 <p class="flash" id="flash" role="alert" hidden></p>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -91,29 +157,71 @@ const db = window.supabase.createClient("https://cskguqtpvvclcphuarkr.supabase.c
 const $ = (s) => document.querySelector(s);
 const node = (tag, text = "", cls = "") => Object.assign(document.createElement(tag), { textContent: text, className: cls });
 const stamp = (t) => new Date(t).toLocaleString([], { dateStyle: "short", timeStyle: "short" });
+const COLS = "id,sender,body,image_paths,created_at";
+const DOCS = { id_card: "ID card", passport: "Passport", drivers_license: "Driver's license", residence_permit: "Residence permit", birth_certificate: "Birth certificate", proof_of_address: "Proof of address", other: "Other document" };
 const seen = new Set();
 let current = null;
+let kycRows = [];
+let kycCurrent = null;
 let channel = null;
 let flashTimer = 0;
-const flash = (text) => {
+const flash = (text, good = false) => {
   const f = $("#flash");
   f.textContent = text;
+  f.classList.toggle("ok", good);
   f.hidden = false;
   clearTimeout(flashTimer);
   flashTimer = setTimeout(() => (f.hidden = true), 3000);
 };
-const signed = async (paths) => {
+const badge = (sel, n) => {
+  $(sel).textContent = n;
+  $(sel).hidden = !n;
+};
+const signed = async (paths, bucket) => {
   if (!paths.length) return {};
-  const { data } = await db.storage.from("support").createSignedUrls(paths, 3600);
+  const { data } = await db.storage.from(bucket).createSignedUrls(paths, 3600);
   return Object.fromEntries((data || []).map((x) => [x.path, x.signedUrl]));
+};
+const vw = { list: [], i: 0, s: 1, x: 0, y: 0, pts: new Map(), pinch: 0, start: 0, tap: 0 };
+const vpaint = () => ($("#vimg").style.transform = "translate(" + vw.x + "px," + vw.y + "px) scale(" + vw.s + ")");
+const vzoom = (s) => {
+  vw.s = Math.min(5, Math.max(1, s));
+  if (vw.s === 1) vw.x = vw.y = 0;
+  vpaint();
+};
+const vgo = (i) => {
+  vw.i = (i + vw.list.length) % vw.list.length;
+  vw.x = vw.y = 0;
+  vw.s = 1;
+  $("#vimg").src = vw.list[vw.i];
+  $("#vcount").textContent = vw.list.length > 1 ? vw.i + 1 + "/" + vw.list.length : "";
+  $("#vprev").hidden = $("#vnext").hidden = vw.list.length < 2;
+  vpaint();
+};
+const openViewer = (urls, i = 0) => {
+  vw.list = urls;
+  vgo(i);
+  $("#viewer").showModal();
+};
+const vgap = () => {
+  const [a, b] = [...vw.pts.values()];
+  return Math.hypot(a.x - b.x, a.y - b.y);
+};
+const thumbs = (urls, cls) => {
+  const box = node("div", "", cls);
+  urls.forEach((u, i) => {
+    const b = node("button", "", "g");
+    b.type = "button";
+    b.append(Object.assign(new Image(), { src: u, alt: "Photo" }));
+    b.addEventListener("click", () => openViewer(urls, i));
+    box.append(b);
+  });
+  return box;
 };
 const bubble = (m, urls) => {
   const el = node("div", "", "msg " + (m.sender === "admin" ? "mine" : "theirs"));
-  if (urls[m.image_path]) {
-    const a = Object.assign(document.createElement("a"), { href: urls[m.image_path], target: "_blank", rel: "noopener" });
-    a.append(Object.assign(new Image(), { src: urls[m.image_path], alt: "Photo", loading: "lazy" }));
-    el.append(a);
-  }
+  const photos = (m.image_paths || []).map((p) => urls[p]).filter(Boolean);
+  if (photos.length) el.append(thumbs(photos, "grid"));
   if (m.body) el.append(node("span", m.body));
   el.append(node("span", stamp(m.created_at), "time"));
   return el;
@@ -121,13 +229,15 @@ const bubble = (m, urls) => {
 const show = async (rows) => {
   const fresh = rows.filter((m) => !seen.has(m.id));
   fresh.forEach((m) => seen.add(m.id));
-  const urls = await signed(fresh.filter((m) => m.image_path).map((m) => m.image_path));
+  const urls = await signed(fresh.flatMap((m) => m.image_paths || []), "support");
   $("#msgs").append(...fresh.map((m) => bubble(m, urls)));
   $("#msgs").scrollTop = $("#msgs").scrollHeight;
 };
 const loadThreads = async () => {
   const { data } = await db.rpc("admin_threads");
-  $("#threads").replaceChildren(...(data || []).map((t) => {
+  const rows = data || [];
+  badge("#support-count", rows.reduce((n, t) => n + Number(t.unread), 0));
+  $("#threads").replaceChildren(...rows.map((t) => {
     const b = node("button", "", t.user_id === current ? "t on" : "t");
     const top = node("span", "", "row");
     const bottom = node("span", "", "row");
@@ -150,15 +260,81 @@ const openThread = async (id, email) => {
   $("#msgs").replaceChildren();
   $("#none").hidden = true;
   $("#chat").hidden = false;
-  $("#app").dataset.pane = "conv";
-  const { data } = await db.from("support_messages").select("id,sender,body,image_path,created_at").eq("user_id", id).order("created_at", { ascending: true }).limit(500);
+  $("#view-support").dataset.pane = "conv";
+  const { data } = await db.from("support_messages").select(COLS).eq("user_id", id).order("created_at", { ascending: true }).limit(500);
   await show(data || []);
   await db.rpc("admin_mark_read", { p_user: id });
   loadThreads();
 };
+const fact = (k, v) => {
+  const row = node("div", "", "fact");
+  row.append(node("span", k, "k"), node("span", v, "v"));
+  return row;
+};
+const loadKyc = async () => {
+  const { data } = await db.rpc("admin_kyc_list");
+  kycRows = data || [];
+  badge("#kyc-count", kycRows.filter((r) => r.status === "pending").length);
+  $("#kyc-list").replaceChildren(...kycRows.map((r) => {
+    const b = node("button", "", r.id === kycCurrent ? "t on" : "t");
+    const top = node("span", "", "row");
+    const bottom = node("span", "", "row");
+    top.append(node("b", r.full_name), node("span", r.status, "tag " + r.status));
+    bottom.append(node("span", r.email, "prev"), node("time", stamp(r.created_at)));
+    b.type = "button";
+    b.append(top, bottom);
+    b.addEventListener("click", () => openKyc(r.id));
+    const li = document.createElement("li");
+    li.append(b);
+    return li;
+  }));
+};
+const openKyc = async (id) => {
+  const row = kycRows.find((r) => r.id === id);
+  const { data: k } = await db.from("kyc_requests").select("*").eq("id", id).single();
+  if (!row || !k) return;
+  kycCurrent = id;
+  const paths = [...k.face_paths, ...k.doc_paths];
+  const urls = await signed(paths, "kyc");
+  const shown = paths.filter((p) => urls[p]);
+  const all = shown.map((p) => urls[p]);
+  const age = Math.floor((Date.now() - new Date(k.birth_date)) / 31557600000);
+  $("#kd-name").textContent = row.full_name;
+  $("#kd-email").textContent = row.email;
+  $("#kd-id").textContent = k.user_id;
+  $("#kd-status").textContent = k.status;
+  $("#kd-status").className = "tag " + k.status;
+  $("#kd-facts").replaceChildren(fact("Full name", row.full_name), fact("Date of birth", k.birth_date + " (" + age + " years)"), fact("Document", DOCS[k.doc_type] || k.doc_type), fact("Submitted", stamp(k.created_at)), ...(k.reason ? [fact("Reason", k.reason)] : []));
+  $("#kd-gallery").replaceChildren(...paths.map((p, i) => {
+    const b = node("button", "", "g");
+    b.type = "button";
+    b.append(Object.assign(new Image(), { src: urls[p], alt: "" }), node("span", i < k.face_paths.length ? "Face " + (i + 1) : "Document " + (i - k.face_paths.length + 1)));
+    b.addEventListener("click", () => openViewer(all, Math.max(0, shown.indexOf(p))));
+    return b;
+  }));
+  $("#kd-decide").hidden = k.status !== "pending";
+  $("#kd-reason").value = "";
+  $("#kyc-none").hidden = true;
+  $("#kyc-chat").hidden = false;
+  $("#view-kyc").dataset.pane = "conv";
+  loadKyc();
+};
+const review = async (status) => {
+  const reason = $("#kd-reason").value.trim();
+  if (status === "rejected" && !reason) return flash("Write the reason for rejecting.");
+  const { data } = await db.rpc("admin_review_kyc", { p_id: kycCurrent, p_status: status, p_reason: reason || null });
+  if (data !== true) return flash("Could not save the decision.");
+  flash("Saved", true);
+  await openKyc(kycCurrent);
+};
+const switchTab = (name) => {
+  document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("on", t.dataset.tab === name));
+  $("#view-kyc").hidden = name !== "kyc";
+  $("#view-support").hidden = name !== "support";
+};
 const listen = () => {
   channel = db
-    .channel("support-admin")
+    .channel("admin")
     .on("postgres_changes", { event: "INSERT", schema: "public", table: "support_messages" }, async (p) => {
       if (p.new.user_id === current) {
         await show([p.new]);
@@ -166,6 +342,7 @@ const listen = () => {
       }
       loadThreads();
     })
+    .on("postgres_changes", { event: "*", schema: "public", table: "kyc_requests" }, () => loadKyc())
     .subscribe();
 };
 const enter = async (session) => {
@@ -178,7 +355,8 @@ const enter = async (session) => {
   $("#me").textContent = session.user.email;
   $("#login").hidden = true;
   $("#app").hidden = false;
-  $("#app").dataset.pane = "list";
+  switchTab("kyc");
+  loadKyc();
   loadThreads();
   listen();
 };
@@ -186,11 +364,12 @@ const leave = () => {
   if (channel) db.removeChannel(channel);
   channel = null;
   current = null;
+  kycCurrent = null;
   seen.clear();
-  $("#threads").replaceChildren();
-  $("#msgs").replaceChildren();
-  $("#chat").hidden = true;
-  $("#none").hidden = false;
+  ["#kyc-list", "#threads", "#msgs", "#kd-gallery", "#kd-facts"].forEach((s) => $(s).replaceChildren());
+  $("#kyc-chat").hidden = $("#chat").hidden = true;
+  $("#kyc-none").hidden = $("#none").hidden = false;
+  $("#view-kyc").dataset.pane = $("#view-support").dataset.pane = "list";
   $("#app").hidden = true;
   $("#login").hidden = false;
 };
@@ -207,11 +386,15 @@ $("#login-form").addEventListener("submit", async (e) => {
   f.reset();
   enter(data.session);
 });
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => switchTab(t.dataset.tab)));
 $("#out").addEventListener("click", async () => {
   await db.auth.signOut();
   leave();
 });
-$("#back").addEventListener("click", () => ($("#app").dataset.pane = "list"));
+$("#back").addEventListener("click", () => ($("#view-support").dataset.pane = "list"));
+$("#kyc-back").addEventListener("click", () => ($("#view-kyc").dataset.pane = "list"));
+$("#approve").addEventListener("click", () => review("approved"));
+$("#reject").addEventListener("click", () => review("rejected"));
 $("#text").addEventListener("input", (e) => {
   e.target.style.height = "auto";
   e.target.style.height = Math.min(e.target.scrollHeight, 140) + "px";
@@ -228,13 +411,59 @@ $("#reply").addEventListener("submit", async (e) => {
   if (!body || !current) return;
   const btn = e.target.querySelector("button");
   btn.disabled = true;
-  const { data, error } = await db.from("support_messages").insert({ user_id: current, sender: "admin", body }).select("id,sender,body,image_path,created_at").single();
+  const { data, error } = await db.from("support_messages").insert({ user_id: current, sender: "admin", body }).select(COLS).single();
   btn.disabled = false;
   if (error) return flash("Could not send the reply.");
   $("#text").value = "";
   $("#text").style.height = "";
   show([data]);
   loadThreads();
+});
+const stage = $("#vstage");
+stage.addEventListener("pointerdown", (e) => {
+  try {
+    stage.setPointerCapture(e.pointerId);
+  } catch {}
+  vw.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  vw.start = e.clientX;
+  if (vw.pts.size === 2) vw.pinch = vgap();
+});
+stage.addEventListener("pointermove", (e) => {
+  const p = vw.pts.get(e.pointerId);
+  if (!p) return;
+  vw.pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (vw.pts.size === 2) {
+    const g = vgap();
+    vzoom((vw.s * g) / vw.pinch);
+    vw.pinch = g;
+  } else if (vw.s > 1) {
+    vw.x += e.clientX - p.x;
+    vw.y += e.clientY - p.y;
+    vpaint();
+  }
+});
+stage.addEventListener("pointerup", (e) => {
+  const dx = e.clientX - vw.start;
+  const single = vw.pts.size === 1;
+  vw.pts.delete(e.pointerId);
+  if (!single) return;
+  if (vw.s === 1 && Math.abs(dx) > 60) return vgo(vw.i + (dx < 0 ? 1 : -1));
+  if (Math.abs(dx) < 8) {
+    const twice = Date.now() - vw.tap < 300;
+    if (twice) vzoom(vw.s > 1 ? 1 : 2.5);
+    vw.tap = twice ? 0 : Date.now();
+  }
+});
+stage.addEventListener("pointercancel", (e) => vw.pts.delete(e.pointerId));
+stage.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  vzoom(vw.s * (e.deltaY < 0 ? 1.2 : 1 / 1.2));
+}, { passive: false });
+$("#vclose").addEventListener("click", () => $("#viewer").close());
+$("#vprev").addEventListener("click", () => vgo(vw.i - 1));
+$("#vnext").addEventListener("click", () => vgo(vw.i + 1));
+document.addEventListener("keydown", (e) => {
+  if ($("#viewer").open && (e.key === "ArrowLeft" || e.key === "ArrowRight")) vgo(vw.i + (e.key === "ArrowRight" ? 1 : -1));
 });
 db.auth.getSession().then(({ data }) => data.session && enter(data.session));
 </script>
